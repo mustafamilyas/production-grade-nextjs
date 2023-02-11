@@ -5,6 +5,7 @@ import Hero from '../components/hero'
 import HomeNav from '../components/homeNav'
 import FeatureSection from '../components/featureSection'
 import { home } from '../content'
+import { GetStaticPropsContext } from 'next'
 
 const Home: FC<{ content: { hero: any; features: any[] } }> = ({ content }) => {
   return (
@@ -46,10 +47,11 @@ Home.defaultProps = {
   },
 }
 
-export function getStaticProps() {
+export function getStaticProps(context: GetStaticPropsContext) {
+  const { preview } = context
   return {
     props: {
-      content: home.published,
+      content: preview ? home.draft : home.published,
     },
   }
 }

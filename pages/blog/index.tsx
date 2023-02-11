@@ -8,6 +8,7 @@ import Container from '../../components/container'
 import HomeNav from '../../components/homeNav'
 import PostPreview from '../../components/postPreview'
 import { posts as postsFromCMS } from '../../content'
+import { GetStaticPropsContext } from 'next'
 
 const Blog = ({ posts }) => {
   return (
@@ -32,7 +33,7 @@ Blog.defaultProps = {
   posts: [],
 }
 
-export function getStaticProps({ params }) {
+export function getStaticProps({ params, preview }: GetStaticPropsContext) {
   const postsDirectory = path.join(process.cwd(), 'posts')
   const fileNames = fs.readdirSync(postsDirectory)
   const posts = fileNames.map((fileName) => {
@@ -41,7 +42,7 @@ export function getStaticProps({ params }) {
     const { data } = matter(post)
     return data
   })
-  const postsCMS = postsFromCMS.published.map((post) => {
+  const postsCMS = (preview ? postsFromCMS.draft : postsFromCMS.published).map((post) => {
     const { data } = matter(post)
     return data
   })
