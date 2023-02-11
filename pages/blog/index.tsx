@@ -32,6 +32,27 @@ Blog.defaultProps = {
   posts: [],
 }
 
+export function getStaticProps({ params }) {
+  const postsDirectory = path.join(process.cwd(), 'posts')
+  const fileNames = fs.readdirSync(postsDirectory)
+  const posts = fileNames.map((fileName) => {
+    const fullPath = path.join(postsDirectory, fileName)
+    const post = fs.readFileSync(fullPath, 'utf8')
+    const { data } = matter(post)
+    return data
+  })
+  const postsCMS = postsFromCMS.published.map((post) => {
+    const { data } = matter(post)
+    return data
+  })
+  const orderedPosts = orderby(postsCMS.concat(posts), 'publishedOn', 'title')
+  return {
+    props: {
+      posts: orderedPosts,
+    },
+  }
+}
+
 export default Blog
 
 /**
